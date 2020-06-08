@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, {useEffect, useState} from 'react'
 import Filter from './components/Filter'
 import PersonForm from "./components/PersonForm";
 import PersonDisplay from "./components/PersonDisplay";
@@ -32,11 +32,16 @@ const App = () => {
             setPersons(persons.map(person => person.id !== id? person : response.data))
         })
             .catch(error => {
-                setErrorMessage(`the'${person.name}' was already deleted from server`)
+                setErrorMessage(`Could not change number`)
+                console.log(error.response.data)
             setTimeout(() => {
                 setErrorMessage(null)
             }, 5000)
-                setPersons(persons.filter(person => person.id !== id))
+                personService
+                    .getAll()
+                    .then(response => {
+                        setPersons(response.data)
+                    })
             })
     }
 
@@ -50,6 +55,7 @@ const App = () => {
                 })
                 .catch(error => {
                     setErrorMessage(`Information of '${person.name}' has already been removed from server`)
+                    console.log(error.response.data)
                     setTimeout(() => {
                         setErrorMessage(null)
                     }, 5000)
@@ -80,10 +86,20 @@ const App = () => {
                 .then(response => {
                     setPersons(persons.concat(response.data))
                 })
-            setMessage(`Added ${newName}`)
-            setTimeout(() => {
-                setMessage(null)
-            }, 5000)
+                .then(result => {
+                    setMessage(`Added ${newName}`)
+                    setTimeout(() => {
+                        setMessage(null)
+                    }, 5000)
+                })
+                .catch(error => {
+                    setErrorMessage(`Entry could not be saved '${error.response.data.toString()}'`)
+                    console.log('should display error')
+                    console.log(error.response.data)
+                    setTimeout(() => {
+                        setErrorMessage(null)
+                }, 5000)
+            })
         } else {
             if (window.confirm(`${newName} is already added to phonebook, replace the old number with a new one?`)){
                 changeNumber(person.id)
