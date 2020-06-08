@@ -49,6 +49,11 @@
     <property name="settings.editor.selected.configurable" value="settings.javascript.linters.eslint" />
     <property name="settings.editor.splitter.proportion" value="0.20795107" />
   </component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Code\JS\Part3\Phonebook\backend\utils" />
+    </key>
+  </component>
   <component name="SvnConfiguration">
     <configuration />
   </component>
@@ -61,7 +66,7 @@
       <updated>1591238258294</updated>
       <workItem from="1591238261098" duration="13911000" />
       <workItem from="1591390696748" duration="9670000" />
-      <workItem from="1591500960862" duration="14477000" />
+      <workItem from="1591500960862" duration="18745000" />
     </task>
     <servers />
   </component>
@@ -89,9 +94,9 @@
       <screen x="0" y="0" width="2560" height="1400" />
     </state>
     <state x="1576" y="334" key="run.anything.popup/0.0.2560.1400@0.0.2560.1400" timestamp="1591240454249" />
-    <state x="1583" y="320" width="672" height="678" key="search.everywhere.popup" timestamp="1591391983671">
+    <state x="1583" y="320" width="672" height="678" key="search.everywhere.popup" timestamp="1591629061207">
       <screen x="0" y="0" width="2560" height="1400" />
     </state>
-    <state x="1583" y="320" width="672" height="678" key="search.everywhere.popup/0.0.2560.1400@0.0.2560.1400" timestamp="1591391983671" />
+    <state x="1583" y="320" width="672" height="678" key="search.everywhere.popup/0.0.2560.1400@0.0.2560.1400" timestamp="1591629061207" />
   </component>
 </project>
