@@ -1,7 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="34788395-dae0-45e2-bac3-7cc6fc3d0789" name="Default Changelist" comment="" />
+    <list default="true" id="34788395-dae0-45e2-bac3-7cc6fc3d0789" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/../../../Part4/Bloglist/app.js" beforeDir="false" afterPath="$PROJECT_DIR$/../../../Part4/Bloglist/app.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../Part4/Bloglist/controller/blogs.js" beforeDir="false" afterPath="$PROJECT_DIR$/../../../Part4/Bloglist/controller/blogs.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../Part4/Bloglist/model/blog.js" beforeDir="false" afterPath="$PROJECT_DIR$/../../../Part4/Bloglist/model/blog.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../Part4/Bloglist/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/../../../Part4/Bloglist/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../Part4/Bloglist/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/../../../Part4/Bloglist/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../Part4/Bloglist/tests/blog_api.test.js" beforeDir="false" afterPath="$PROJECT_DIR$/../../../Part4/Bloglist/tests/blog_api.test.js" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -37,7 +44,7 @@
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
     <property name="js.linters.configure.manually.selectedeslint" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../../../Part4/Bloglist" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.detected.package.standard" value="true" />
     <property name="node.js.detected.package.tslint" value="true" />
@@ -69,6 +76,7 @@
       <workItem from="1591238261098" duration="13911000" />
       <workItem from="1591390696748" duration="9670000" />
       <workItem from="1591500960862" duration="22589000" />
+      <workItem from="1591818453692" duration="1587000" />
     </task>
     <servers />
   </component>

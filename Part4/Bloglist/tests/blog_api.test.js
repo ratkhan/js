@@ -1,53 +1,162 @@
 const mongoose = require('mongoose');
 const supertest = require('supertest');
+const helper = require('./test_helper');
 const app = require('../app');
 const api = supertest(app);
+
 const Blog = require('../model/blog');
 
-const initialBlogs = [
-    {
-        title: 'Blog1',
-        author: 'Ratkhan Saginbazarov',
-        url: 'local',
-        likes: 24
-    },
-    {
-        title: 'Blog2',
-        author: 'Ratkhan Saginbazarov',
-        url: 'local',
-        likes: 25
-    }
-];
+
 
 beforeEach( async () => {
     await Blog.deleteMany({});
-
-    let blogObject = new Blog(initialBlogs[0]);
-    await blogObject.save()
-
-    blogObject = new Blog(initialBlogs[1]);
+    let blogObject = new Blog(helper.initialBlogs[0]);
     await blogObject.save();
 
+    blogObject = new Blog(helper.initialBlogs[1]);
+    await blogObject.save();
 });
 
-test('notes are returned as json', async() => {
+test('blogs are returned as json', async() => {
     await api
         .get('/api/blogs')
         .expect(200)
         .expect('Content-Type', /application\/json/);
 });
 
-test('there are two blogs', async () => {
+test('all blogs are returned', async () => {
     const response = await api.get('/api/blogs');
 
-    expect(response.body).toHaveLength(2);
+    expect(response.body).toHaveLength(helper.initialBlogs.length);
 });
 
 test('the first blog title should be Blog1', async () => {
     const response = await api.get('/api/blogs');
 
-    expect(response.body[0].title).toBe('Blog1');
+    expect(response.body[0].title).toBe(helper.initialBlogs[0].title);
 });
+
+test('a valid blog can be added', async () => {
+    const newBlog = {
+        title: 'Blog3',
+        author: 'Ratkhan',
+        url: 'local',
+        likes: 26
+    };
+
+    await api
+        .post('/api/blogs')
+        .send(newBlog)
+        .expect(200)
+        .expect('Content-Type', /application\/json/);
+
+    const blogsAtEnd = await helper.blogsInDb();
+
+    expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length + 1);
+
+    const contents = blogsAtEnd.map(b => b.title);
+    expect(contents).toContain(
+        newBlog.title
+    );
+});
+
+test('blog without content is not added', async () => {
+    const newBlog = {
+        likes: 22
+    };
+
+    await api
+        .post('/api/blogs')
+        .send(newBlog)
+        .expect(400);
+
+    const blogsAtEnd = await helper.blogsInDb();
+    expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length);
+});
+
+test('a specific blog can be viewed', async() => {
+    const blogsAtStart = await helper.blogsInDb();
+
+    const blogToView = blogsAtStart[0];
+
+    const resultBlog = await api
+        .get(`/api/blogs/${blogToView.title}`)
+        .expect(200)
+        .expect('Content-type', /application\/json/);
+    expect(JSON.stringify(resultBlog.body)).toEqual(JSON.stringify(blogToView));
+});
+
+test('a blog can be deleted', async() => {
+    const blogsAtStart = await helper.blogsInDb();
+    const blogToDelete = blogsAtStart[0];
+
+    await api
+        .delete(`/api/blogs/${blogToDelete.title}`)
+        .expect(204);
+
+    const blogsAtEnd = await helper.blogsInDb();
+
+    expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length - 1);
+
+    const title = blogsAtEnd.map(b => b.title);
+    expect(title).not.toContain(blogToDelete.title);
+});
+
+test('an id field is defined', async () => {
+    const blogsAtStart = await helper.blogsInDb();
+    const blog = blogsAtStart[0];
+    console.log(blog.title);
+    expect((blog.id));
+});
+
+test('cannot add a blog without title or url', async () => {
+    const NoTitleBlog = {
+        author: 'Ratkhan',
+        url: 'local',
+        likes: 26
+    };
+
+    await api
+        .post('/api/blogs')
+        .send(NoTitleBlog)
+        .expect(400);
+
+    let blogsAtEnd = await helper.blogsInDb();
+
+    expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length);
+
+    const NoUrlBlog = {
+        title: 'Blog8',
+        author: 'Ratkhan',
+        likes: 26
+    };
+
+    await api
+        .post('/api/blogs')
+        .send(NoUrlBlog)
+        .expect(400);
+
+    blogsAtEnd = await helper.blogsInDb();
+
+    expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length);
+
+});
+
+test('can change content of blog defined by title', async () => {
+    const blogToChange = {
+        title: 'Blog1',
+        author: 'Ratkhan',
+        url: 'local',
+        likes: 26
+    };
+
+    await api
+        .put(`/api/blogs/${blogToChange.title}`)
+        .send(blogToChange)
+        .expect(200)
+        .expect('Content-Type', /application\/json/);
+});
+
 
 afterAll(() => {
     mongoose.connection.close();
