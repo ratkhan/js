@@ -3,7 +3,7 @@ const supertest = require('supertest');
 const helper = require('./test_helper');
 const app = require('../app');
 const api = supertest(app);
-
+const User = require('../model/user');
 const Blog = require('../model/blog');
 
 
@@ -37,11 +37,16 @@ test('the first blog title should be Blog1', async () => {
 });
 
 test('a valid blog can be added', async () => {
+    const users = await helper.usersInDb();
+    const user = users[0];
     const newBlog = {
-        title: 'Blog3',
-        author: 'Ratkhan',
-        url: 'local',
-        likes: 26
+        content: {
+            title: 'Blog3',
+            author: 'Ratkhan 1',
+            url: 'local',
+            likes: 26
+        },
+        user: user.id
     };
 
     await api
@@ -62,7 +67,8 @@ test('a valid blog can be added', async () => {
 
 test('blog without content is not added', async () => {
     const newBlog = {
-        likes: 22
+        content:
+            {likes: 22}
     };
 
     await api
@@ -80,7 +86,7 @@ test('a specific blog can be viewed', async() => {
     const blogToView = blogsAtStart[0];
 
     const resultBlog = await api
-        .get(`/api/blogs/${blogToView.title}`)
+        .get(`/api/blogs/${blogToView.id}`)
         .expect(200)
         .expect('Content-type', /application\/json/);
     expect(JSON.stringify(resultBlog.body)).toEqual(JSON.stringify(blogToView));
@@ -91,15 +97,15 @@ test('a blog can be deleted', async() => {
     const blogToDelete = blogsAtStart[0];
 
     await api
-        .delete(`/api/blogs/${blogToDelete.title}`)
+        .delete(`/api/blogs/${blogToDelete.id}`)
         .expect(204);
 
     const blogsAtEnd = await helper.blogsInDb();
 
     expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length - 1);
 
-    const title = blogsAtEnd.map(b => b.title);
-    expect(title).not.toContain(blogToDelete.title);
+    const title = blogsAtEnd.map(b => b.content.title);
+    expect(title).not.toContain(blogToDelete.content.title);
 });
 
 test('an id field is defined', async () => {
@@ -111,9 +117,11 @@ test('an id field is defined', async () => {
 
 test('cannot add a blog without title or url', async () => {
     const NoTitleBlog = {
-        author: 'Ratkhan',
-        url: 'local',
-        likes: 26
+        content: {
+            author: 'Ratkhan',
+            url: 'local',
+            likes: 26
+        }
     };
 
     await api
@@ -126,9 +134,11 @@ test('cannot add a blog without title or url', async () => {
     expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length);
 
     const NoUrlBlog = {
-        title: 'Blog8',
-        author: 'Ratkhan',
-        likes: 26
+        content: {
+            title: 'Blog8',
+            author: 'Ratkhan',
+            likes: 26
+        }
     };
 
     await api
