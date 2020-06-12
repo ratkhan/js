@@ -5,16 +5,38 @@ const app = require('../app');
 const api = supertest(app);
 const User = require('../model/user');
 const Blog = require('../model/blog');
-
-
+const bcrypt = require('bcrypt');
+const logger = require('../utils/logger');
 
 beforeEach( async () => {
+    await User.deleteMany({});
+
+    const passwordHash = await bcrypt.hash('secret', 10);
+    const user = new User({username: 'root',name:'Ratkhan', passwordHash});
+    const savedUser = await user.save();
+    const userId = savedUser.id;
+    logger.info('created user with id', userId);
     await Blog.deleteMany({});
+
+    const userToLogin = {
+        username: user.username,
+        password: 'secret'
+    };
+
+    const loggedInUser = await api
+        .post('/api/login')
+        .send(userToLogin);
+
+    const token = loggedInUser.token;
+
     let blogObject = new Blog(helper.initialBlogs[0]);
+    blogObject.user = userId.toString();
     await blogObject.save();
 
     blogObject = new Blog(helper.initialBlogs[1]);
+    blogObject.user = userId.toString();
     await blogObject.save();
+
 });
 
 test('blogs are returned as json', async() => {
@@ -38,6 +60,7 @@ test('the first blog title should be Blog1', async () => {
 
 test('a valid blog can be added', async () => {
     const users = await helper.usersInDb();
+    logger.info(users);
     const user = users[0];
     const newBlog = {
         content: {

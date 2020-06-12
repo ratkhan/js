@@ -6,6 +6,11 @@ usersRouter.post('/', async(request, response) => {
     const body = request.body;
 
     const saltRounds = 10;
+    if (!body.password){
+        return response.status(400).json({
+            error: 'password empty'
+        });
+    }
     const passwordHash = await bcrypt.hash(body.password, saltRounds);
 
     const user = new User({
