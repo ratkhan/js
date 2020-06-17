@@ -1,29 +1,29 @@
-import React, {useState} from 'react'
-import Togglable from "./Togglable";
+import React, { useState } from 'react';
+import Togglable from './Togglable';
 const BlogInputForm = ({
-                        handleSubmit,
-                        handleTitleChange,
-                        handleAuthorChange,
-                        handleUrlChange,
-                        newTitle,
-                        newAuthor,
-                        newUrl
-                   }) => {
+    handleSubmit,
+    handleTitleChange,
+    handleAuthorChange,
+    handleUrlChange,
+    newTitle,
+    newAuthor,
+    newUrl
+}) => {
     const [visible, setVisible] = useState (false);
 
-    const hideWhenVisible = { display: visible ? 'none' : ''};
-    const showWhenVisible = { display: visible ? '' : 'none'};
+    const hideWhenVisible = { display: visible ? 'none' : '' };
+    const showWhenVisible = { display: visible ? '' : 'none' };
 
     const toggleVisibility = () => {
         setVisible(!visible);
-    }
+    };
 
     return (
         <tr >
             <td >
                 <input
                     style={showWhenVisible}
-                    id={"titleField"}
+                    id={'titleField'}
                     placeholder="title..."
                     type="text"
                     value={newTitle}
@@ -35,7 +35,7 @@ const BlogInputForm = ({
             <td >
                 <input
                     style={showWhenVisible}
-                    id={"authorField"}
+                    id={'authorField'}
                     placeholder="author..."
                     type="text"
                     value={newAuthor}
@@ -46,7 +46,7 @@ const BlogInputForm = ({
             <td >
                 <input
                     style={showWhenVisible}
-                    id={"urlField"}
+                    id={'urlField'}
                     placeholder="url..."
                     type="text"
                     value={newUrl}
@@ -69,7 +69,7 @@ const BlogInputForm = ({
                 </button>
             </td>
         </tr>
-    )
-}
+    );
+};
 
 export default BlogInputForm;
