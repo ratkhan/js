@@ -2,6 +2,9 @@ import React, { useState, useEffect } from 'react';
 import Blog from './components/Blog'
 import blogService from './services/blogs';
 import loginService from './services/login';
+import LoginForm from "./components/LoginForm";
+import Togglable from "./components/Togglable";
+import BlogInputForm from "./components/BlogInputForm";
 import './App.css';
 
 const App = () => {
@@ -10,11 +13,11 @@ const App = () => {
     const [blogs, setBlogs] = useState([]);
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
-    const [user, setUser] = useState({'username':'empty',
-                                                'name':'empty'});
+    const [user, setUser] = useState(null);
     const [newTitle, setTitle] = useState('');
     const [newAuthor, setAuthor] = useState('');
     const [newUrl, setUrl] = useState('');
+    const [loginVisible, setLoginVisible] = useState(false);
 
     const handleLogin = async (event) => {
         event.preventDefault();
@@ -32,7 +35,7 @@ const App = () => {
             setUsername('');
             setPassword('');
         } catch (exception) {
-            setErrorMessage('Wrong credentials')
+            setErrorMessage('Could not log in')
             setTimeout(() => {
                 setErrorMessage(null)
             }, 5000);
@@ -54,38 +57,22 @@ const App = () => {
         );
     }, []);
 
-    const loginForm = () => (
-        <div class="loginForm">
-        <form onSubmit = {handleLogin}>
-            <div className="row">
-                <label htmlFor="loginField">username</label>
-                <input
-                    id="loginField"
-                    placeholder="..."
-                    type="text"
-                    value={username}
-                    name="Username"
-                    onChange={({target}) => setUsername(target.value)}
-                />
-                <label htmlFor="passwordField">password</label>
-                <input
-                    id="passwordField"
-                    placeholder="..."
-                    type="text"
-                    value={password}
-                    name="Password"
-                    onChange={({target}) => setPassword(target.value)}
-                />
-            </div>
-            <button type="submit">login</button>
-        </form>
-        </div>
-    )
+    const togglableLoginForm = () => {
+        return <Togglable buttonLabel='login'>
+            <LoginForm
+                username={username}
+                password={password}
+                handleUsernameChange={({ target }) => setUsername(target.value)}
+                handlePasswordChange={({ target }) => setPassword(target.value)}
+                handleSubmit={handleLogin}
+            />
+        </Togglable>
+    }
 
     const logOut = async (event) => {
         event.preventDefault();
         try{
-            window.localStorage.removeItem('loggedNoteappUser')
+            window.localStorage.removeItem('loggedBlogappUser')
             setUser(null)
         } catch (exception) {
             setErrorMessage('Could not log out')
@@ -95,12 +82,12 @@ const App = () => {
         }
     }
 
-    const addBlog = async (event) => {
+    const addBlog = async (event, title, ) => {
         event.preventDefault()
         const blogObject = {
             content: {
                 title: newTitle,
-                author: newTitle,
+                author: newAuthor,
                 url: newUrl,
                 likes: 0
             }
@@ -111,7 +98,7 @@ const App = () => {
             setTitle('');
             setAuthor('');
             setUrl('');
-           // setMessage(`Added ${response.body.content.title} blog`)
+            // setMessage(`Added ${response.body.content.title} blog`)
             setTimeout( () => {
                 setMessage(null)
             }, 5000)
@@ -119,13 +106,34 @@ const App = () => {
                 setBlogs(blogs)
             );
         } catch (exception) {
-            setErrorMessage(`Entry could not be saved '${exception.response}'`)
+            setErrorMessage(`Entry could not be saved`)
             console.log(exception)
             setTimeout(() => {
                 setErrorMessage(null)
             }, 5000)
         }
+    }
 
+    const likeBlog = async (id) => {
+        try {
+            let blogObject = await blogService.find(id);
+            console.log('found', blogObject)
+            blogObject.data.content.likes += 1;
+            console.log('updated', blogObject)
+            const response = await blogService.update(id,blogObject.data);
+
+            setTimeout( () => {
+                setMessage(null)
+            }, 5000)
+            const blogs = await blogService.getAll();
+            setBlogs(blogs);
+        } catch (exception) {
+            setErrorMessage(`Could not perform the action`)
+            console.log(exception)
+            setTimeout(() => {
+                setErrorMessage(null)
+            }, 5000)
+        }
     }
 
     const removeBlog = async (id) => {
@@ -136,7 +144,7 @@ const App = () => {
             );
         } catch (error) {
             console.log(error)
-                setErrorMessage(`Entry could not be deleted`)
+            setErrorMessage(`Entry could not be deleted`)
             setTimeout(() => {
                 setErrorMessage(null)
             }, 5000)
@@ -145,80 +153,52 @@ const App = () => {
 
     const BlogForm = () => {
         return (
-        <tr>
-            <td>
-                <input
-                id={"titleField"}
-                placeholder="title..."
-                type="text"
-                value={newTitle}
-                name="Title"
-                onChange={({target}) => setTitle(target.value)}
-                />
-            </td>
-            <td>
-                <input
-                id={"authorField"}
-                placeholder="author..."
-                type="text"
-                value={newAuthor}
-                name="Author"
-                onChange={({target}) => setAuthor(target.value)}
-                />
-            </td>
-            <td>
-                <input
-                    id={"urlField"}
-                    placeholder="url..."
-                    type="text"
-                    value={newUrl}
-                    name="Url"
-                    onChange={({target}) => setUrl(target.value)}
-                />
-            </td>
-            <td>
-                -
-            </td>
-            <td>
-                <form onSubmit={addBlog}>
-                    <button type="submit">save</button>
-                </form>
-            </td>
-        </tr>
-        )
+            <BlogInputForm
+                newTitle={newTitle}
+                newAuthor={newAuthor}
+                newUrl={newUrl}
+                handleTitleChange={({ target }) => setTitle(target.value)}
+                handleAuthorChange={({ target }) => setAuthor(target.value)}
+                handleUrlChange={({ target }) => setUrl(target.value)}
+                handleSubmit={addBlog}
+            />)
     }
 
     return (
         <div>
             <p>{errorMessage}</p>
-            {user === null ? loginForm()
-            :
-            (<div>
-                <p>{user.name} logged in</p>
-                <form onSubmit={logOut}>
-                    <button type="submit">logOut</button>
-                </form>
+            { user === null ? togglableLoginForm()
+                :
+                (<div>
+                    <p>Logged in as {user.name}</p>
+                    <form onSubmit={logOut}>
+                        <button className="logout" type="submit">logOut</button>
+                    </form>
 
-            <strong>Blogs</strong>
-            <table>
-                <thead>
-                <tr>
-                    <th>title</th>
-                    <th>author</th>
-                    <th>link</th>
-                    <th>likes</th>
-                    <th>---</th>
-                </tr>
-                </thead>
-                <tbody>
-                {blogs.map(blog =>
-                    <Blog key={blog.id} user={user} blog={blog} removeBlog={removeBlog} />
-
-                )}
-                {BlogForm()}
-                </tbody>
-            </table>
-            </div> )}
+                    <strong>Blogs</strong>
+                    <table>
+                        <thead>
+                        <tr>
+                            <th>title</th>
+                            <th>author</th>
+                            <th>link</th>
+                            <th>likes</th>
+                            <th>---</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {blogs.map(blog =>
+                            <Blog
+                                key={blog.id}
+                                user={user}
+                                blog={blog}
+                                likeBlog={likeBlog}
+                                removeBlog={removeBlog} />
+                        )}
+                        {BlogForm()}
+                        </tbody>
+                    </table>
+                </div> )}
         </div>
     )
 };

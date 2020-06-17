@@ -172,6 +172,7 @@ input[type="reset"],
 input[type="button"] {
   display: inline-block;
   height: 38px;
+  width: 120px;
   padding: 0 30px;
   color: #555;
   text-align: center;
@@ -350,6 +351,14 @@ div.loginForm {
   margin-right: -50%;
   transform: translate(-50%, -50%) }
 
+/* Logout button
+–––––––––––––––––––––––––––––––––––––––––––––––––– */
+.logout{
+
+  position:fixed;
+  right:10px;
+  top:5px;
+}
 
 /* Spacing
 –––––––––––––––––––––––––––––––––––––––––––––––––– */
@@ -365,7 +374,13 @@ pre,
 blockquote,
 dl,
 figure,
-table,
+table {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin-right: -50%;
+  transform: translate(-50%, -50%)
+}
 p,
 ul,
 ol,
