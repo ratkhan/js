@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import Blog from './components/Blog'
+import Blog from './components/Blog';
 import blogService from './services/blogs';
 import loginService from './services/login';
-import LoginForm from "./components/LoginForm";
-import Togglable from "./components/Togglable";
-import BlogInputForm from "./components/BlogInputForm";
+import LoginForm from './components/LoginForm';
+import Togglable from './components/Togglable';
+import BlogInputForm from './components/BlogInputForm';
 import './App.css';
 
 const App = () => {
@@ -28,26 +28,26 @@ const App = () => {
 
             window.localStorage.setItem(
                 'loggedBlogappUser', JSON.stringify(user)
-            )
+            );
 
             blogService.setToken(user.token);
             setUser(user);
             setUsername('');
             setPassword('');
         } catch (exception) {
-            setErrorMessage('Could not log in')
+            setErrorMessage('Could not log in');
             setTimeout(() => {
-                setErrorMessage(null)
+                setErrorMessage(null);
             }, 5000);
         }
     };
 
     useEffect(() => {
-        const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')
+        const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser');
         if (loggedUserJSON) {
-            const user = JSON.parse(loggedUserJSON)
-            setUser(user)
-            blogService.setToken(user.token)
+            const user = JSON.parse(loggedUserJSON);
+            setUser(user);
+            blogService.setToken(user.token);
         }
     }, []);
 
@@ -66,24 +66,24 @@ const App = () => {
                 handlePasswordChange={({ target }) => setPassword(target.value)}
                 handleSubmit={handleLogin}
             />
-        </Togglable>
-    }
+        </Togglable>;
+    };
 
     const logOut = async (event) => {
         event.preventDefault();
         try{
-            window.localStorage.removeItem('loggedBlogappUser')
-            setUser(null)
+            window.localStorage.removeItem('loggedBlogappUser');
+            setUser(null);
         } catch (exception) {
-            setErrorMessage('Could not log out')
+            setErrorMessage('Could not log out');
             setTimeout(() => {
-                setErrorMessage(null)
+                setErrorMessage(null);
             }, 5000);
         }
-    }
+    };
 
     const addBlog = async (event, title, ) => {
-        event.preventDefault()
+        event.preventDefault();
         const blogObject = {
             content: {
                 title: newTitle,
@@ -91,7 +91,7 @@ const App = () => {
                 url: newUrl,
                 likes: 0
             }
-        }
+        };
 
         try {
             const response = await blogService.save(blogObject);
@@ -100,41 +100,41 @@ const App = () => {
             setUrl('');
             // setMessage(`Added ${response.body.content.title} blog`)
             setTimeout( () => {
-                setMessage(null)
-            }, 5000)
+                setMessage(null);
+            }, 5000);
             blogService.getAll().then(blogs =>
                 setBlogs(blogs)
             );
         } catch (exception) {
-            setErrorMessage(`Entry could not be saved`)
-            console.log(exception)
+            setErrorMessage('Entry could not be saved');
+            console.log(exception);
             setTimeout(() => {
-                setErrorMessage(null)
-            }, 5000)
+                setErrorMessage(null);
+            }, 5000);
         }
-    }
+    };
 
     const likeBlog = async (id) => {
         try {
             let blogObject = await blogService.find(id);
-            console.log('found', blogObject)
+            console.log('found', blogObject);
             blogObject.data.content.likes += 1;
-            console.log('updated', blogObject)
+            console.log('updated', blogObject);
             const response = await blogService.update(id,blogObject.data);
 
             setTimeout( () => {
-                setMessage(null)
-            }, 5000)
+                setMessage(null);
+            }, 5000);
             const blogs = await blogService.getAll();
             setBlogs(blogs);
         } catch (exception) {
-            setErrorMessage(`Could not perform the action`)
-            console.log(exception)
+            setErrorMessage('Could not perform the action');
+            console.log(exception);
             setTimeout(() => {
-                setErrorMessage(null)
-            }, 5000)
+                setErrorMessage(null);
+            }, 5000);
         }
-    }
+    };
 
     const removeBlog = async (id) => {
         try {
@@ -143,13 +143,13 @@ const App = () => {
                 setBlogs(blogs)
             );
         } catch (error) {
-            console.log(error)
-            setErrorMessage(`Entry could not be deleted`)
+            console.log(error);
+            setErrorMessage('Entry could not be deleted');
             setTimeout(() => {
-                setErrorMessage(null)
-            }, 5000)
+                setErrorMessage(null);
+            }, 5000);
         }
-    }
+    };
 
     const BlogForm = () => {
         return (
@@ -161,8 +161,8 @@ const App = () => {
                 handleAuthorChange={({ target }) => setAuthor(target.value)}
                 handleUrlChange={({ target }) => setUrl(target.value)}
                 handleSubmit={addBlog}
-            />)
-    }
+            />);
+    };
 
     return (
         <div>
@@ -178,15 +178,14 @@ const App = () => {
                     <strong>Blogs</strong>
                     <table>
                         <thead>
-                        <tr>
-                            <th>title</th>
-                            <th>author</th>
-                            <th>link</th>
-                            <th>likes</th>
-                            <th>---</th>
-                        </tr>
+                            <tr>
+                                <th>title</th>
+                                <th>author</th>
+                                <th>link</th>
+                                <th>likes</th>
+                                <th>---</th>
+                            </tr>
                         </thead>
-                        <tbody>
                         {blogs.map(blog =>
                             <Blog
                                 key={blog.id}
@@ -195,12 +194,13 @@ const App = () => {
                                 likeBlog={likeBlog}
                                 removeBlog={removeBlog} />
                         )}
-                        {BlogForm()}
+                        <tbody>
+                            {BlogForm()}
                         </tbody>
                     </table>
                 </div> )}
         </div>
-    )
+    );
 };
 
 export default App;

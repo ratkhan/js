@@ -1,6 +1,7 @@
 import React from 'react';
 import '@testing-library/jest-dom/extend-expect';
 import { render } from '@testing-library/react';
+import { prettyDOM } from '@testing-library/dom';
 import Blog from './Blog';
 
 test (' renders content', () => {
@@ -18,6 +19,7 @@ test (' renders content', () => {
             },
             id: '5ee38c5ed0224f43f8a9e05f'
         };
+
     const user =
         {
             blogs: [],
@@ -25,6 +27,7 @@ test (' renders content', () => {
             name: 'ratkhan',
             id: '5ee45042e6b79e258424dd71'
         };
+
     const component = render (
         <Blog
             user={user}
@@ -33,6 +36,9 @@ test (' renders content', () => {
             removeBlog={ () => {} }
         />
     );
+    const li = component.container.querySelector('li');
+
+    console.log(prettyDOM(li));
 
     //method 1
     expect(component.container).toHaveTextContent(
@@ -45,10 +51,12 @@ test (' renders content', () => {
     );
     expect(element).toBeDefined();
 
+    /*
     //method 3
     const div = component.container.querySelector('.blog');
     expect(div).toHaveTextContent(
         'Ratkhan Saginbazarov'
     );
-
-})
+    */
+    component.debug();
+});
