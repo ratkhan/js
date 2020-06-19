@@ -102,7 +102,7 @@ test('pressing the like button twice, calls the function twice', () => {
     fireEvent.click(button);
     fireEvent.click(button);
     expect(mockHandler.mock.calls).toHaveLength(2);
-})
+});
 
 
 
