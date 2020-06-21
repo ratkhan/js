@@ -2,7 +2,7 @@ const blogsRouter = require('express').Router();
 const Blog = require('../model/blog');
 const User = require('../model/user');
 const jwt = require('jsonwebtoken');
-const logger = require('../utils/logger')
+const logger = require('../utils/logger');
 require('express-async-errors');
 
 
@@ -60,16 +60,32 @@ blogsRouter.post('/',async (request, response, next) => {
 });
 
 blogsRouter.put('/:id', async (request, response) => {
-    const body = request.body;
+    const body = await request.body.content;
+    const blogToUpdate = await request.params.id;
+    const decodedToken = jwt.verify(request.token, process.env.SECRET);
+    if(!request.token || !decodedToken.id) {
+        return response.status(401).json({error: 'token missing or invalid'});
+    }
 
+    const user = await User.findById(decodedToken.id);
+    const blogFromDB = await Blog.findById(blogToUpdate);
+    const userBlogCreator = blogFromDB.user._id;
+    logger.info('user id form blog', userBlogCreator.toString());
+    logger.info('user if form token', user.id.toString());
+    if ((userBlogCreator.toString() === user.id)){
+        return response.status(401).json({error: 'unathorized, cannot like your own blog'});
+    }
     const blog = {
-        title: body.title,
-        author: body.author,
-        url: body.url,
-        likes: body.likes
+        content: {
+            title: body.title,
+            author: body.author,
+            url: body.url,
+            likes: body.likes
+        },
+        user: userBlogCreator
     };
 
-    const result = await Blog.findOneAndUpdate(request.params._id, blog, {new:true});
+    const result = await Blog.findByIdAndUpdate(blogToUpdate, blog, {new:true});
     response.json(result);
 });
 
