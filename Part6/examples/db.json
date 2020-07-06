@@ -1,0 +1,44 @@
+{
+  "notes": [
+    {
+      "content": "the app state is in redux store",
+      "important": true,
+      "id": 1
+    },
+    {
+      "content": "state changes are made with actions",
+      "important": false,
+      "id": 2
+    },
+    {
+      "content": "new entry",
+      "important": false,
+      "id": 3
+    },
+    {
+      "content": "asdas",
+      "important": false,
+      "id": 4
+    },
+    {
+      "content": "asdas",
+      "important": false,
+      "id": 5
+    },
+    {
+      "content": "asd",
+      "important": false,
+      "id": 6
+    },
+    {
+      "content": "asdasd",
+      "important": false,
+      "id": 7
+    },
+    {
+      "content": "asda",
+      "important": false,
+      "id": 8
+    }
+  ]
+}

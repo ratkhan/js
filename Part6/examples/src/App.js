@@ -1,44 +1,26 @@
-import React from 'react';
-import ReactDOM from 'react-dom'
-import noteReducer from "./reducers/noteReducer";
+import React, { useEffect } from 'react';
+import NewNote from "./components/Note";
 import './App.css';
-import { createStore } from 'redux';
+import Notes from "./components/Notes";
+import VisibilityFilter from "./components/VisibilityFilter";
+import {useDispatch} from "react-redux";
+import {initializeNotes} from "./reducers/noteReducer";
+import noteService from './services/notes'
 
+const App = () => {
+    const dispatch = useDispatch();
+    useEffect( () => {
+        noteService
+            .getAll().then( notes => dispatch(initializeNotes(notes)))
+    }, [dispatch])
 
-
-const store = createStore(noteReducer);
-
-store.dispatch({
-    type: 'NEW_NOTE',
-    data: {
-        content: 'the app state is in redux store',
-        important: true,
-        id: 1
-    }
-})
-
-store.dispatch({
-    type: 'NEW_NOTE',
-    data: {
-        content: 'state changes are made with actions',
-        important: false,
-        id: 2
-    }
-})
-
-
-function App() {
-  return (
-      <div className="App">
-          <ul>
-              {store.getState().map(note =>
-                <li key = {note.id}>
-                    {note.content} <strong>{note.important ? 'important' : ''}</strong>
-                </li>
-              )}
-          </ul>
-      </div>
-  );
+    return (
+        <div>
+            <NewNote/>
+            <VisibilityFilter />
+            <Notes />
+        </div>
+    )
 }
 
-export default App;
+export default App
