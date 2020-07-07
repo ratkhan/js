@@ -38,14 +38,14 @@ const AnecdoteList = () => {
         <div>
             <h2>Anecdotes</h2>
             <div>{anecdotes.map(anecdote =>
-               <Anecdote key = {anecdote.id} anecdote={anecdote} handleClick={() => {
-                   dispatch(vote(anecdote.id))
-                   dispatch(notificationChange("voted"))
-                   setTimeout(() => {
-                       dispatch(notificationChange(''));
-                   }, 5000);
+                <Anecdote key = {anecdote.id} anecdote={anecdote} handleClick={() => {
+                    dispatch(vote(anecdote.id))
+                    dispatch(notificationChange("voted"))
+                    setTimeout(() => {
+                        dispatch(notificationChange(''));
+                    }, 5000);
 
-               return}} />
+                    return}} />
             )}
             </div>
         </div>
