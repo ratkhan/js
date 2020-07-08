@@ -13,4 +13,14 @@ const createNew = async (content) => {
     return response.data;
 }
 
-export default { getAll, createNew }
+const update = async (id, newObject) => {
+    const response = await axios.put(`${baseUrl}/${id}`, newObject);
+    return response.data;
+}
+
+const find = async (id) => {
+    const response = await axios.get(`${baseUrl}/${id}`)
+    return response.data
+}
+
+export default { getAll, createNew, update, find }

@@ -21,21 +21,32 @@ export const initializeAnecdotes = (anecdotes) => {
   }
 }
 
+export const likeAnecdote = (id) => {
+  return async dispatch => {
+    const anecdoteToLike = await anecdoteService.find(id);
+    const anecdoteSaved = await anecdoteService.update(id, {...anecdoteToLike, votes : anecdoteToLike.votes + 1});
+    dispatch({
+      type: 'VOTE',
+      data: anecdoteSaved
+    })
+  }
+}
+
+
+
+
 const reducer = (state = [], action) => {
   switch (action.type) {
     case 'NEW_ANECDOTE':
       return state.concat(action.data)
     case 'INIT_ANECDOTES':
-      return action.data
+      return action.data.sort(function(a, b) {
+      return a.votes - b.votes;
+    })
     case 'VOTE': {
-      const id = action.id;
-      const anecdoteToChange = state.find(n => n.id === id);
-      const changedAnecdote = {
-        ...anecdoteToChange,
-        votes: anecdoteToChange.votes + 1
-      }
+      const id = action.data.id;
       return state.map(anecdote =>
-          anecdote.id !== id ? anecdote : changedAnecdote
+          anecdote.id !== id ? anecdote : action.data
       ).sort(function(a, b) {
         return a.votes - b.votes;
       })
